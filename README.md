@@ -1,0 +1,2 @@
+# NuxtTraining
+project latihan nuxt
