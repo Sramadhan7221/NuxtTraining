@@ -1,17 +1,29 @@
 <template>
   <div class="py-4">
-    <div class="container">
+    <div class="container" v-if="!loading">
       <div class="title border-bottom d-flex align-items-center py-2">
         <h5>Task</h5>
         <div class="d-flex align-items-center ms-auto">
-          <button class="btn btn-outline-primary py-1 px-3 me-4" @click="shuffle">Shuffle!</button>
+          <button
+            class="btn btn-outline-primary py-1 px-3 me-4"
+            @click="shuffle"
+          >
+            Shuffle!
+          </button>
           <input
             type="text"
             class="form-control"
             placeholder="Search"
             v-model="searchQuery"
           />
-          <div class="d-flex align-items-center justify-content-end w-100 mx-1">
+          <div class="d-flex align-items-center justify-content-end mx-2">
+            <span class="col-3 me-2">Order On</span>
+            <select v-model="sortBy">
+              <option value="1">Ascending</option>
+              <option value="0">Descending</option>
+            </select>
+          </div>
+          <div class="d-flex align-items-center justify-content-end mx-1">
             <span class="me-2">View As</span>
             <button
               class="btn btn-outline-secondary py-1 px-3"
@@ -19,13 +31,6 @@
             >
               {{ isGrid ? "Grid" : "List" }}
             </button>
-          </div>
-          <div class="d-flex align-items-center justify-content-end w-100 mx-2">
-            <span class="me-2">Order On</span>
-            <select v-model="sortBy">
-              <option value="1">Ascending</option>
-              <option value="0">Descending</option>
-            </select>
           </div>
           <div class="d-flex align-items-center ms-auto">
             <select v-model="kategori">
@@ -36,24 +41,14 @@
           </div>
         </div>
       </div>
-      <transition-group name="tasks" tag="div" class="list-task row" v-if="!loading">
+      <transition-group name="tasks" tag="div" class="list-task row">
         <CardItem
-          v-for="(tasks) in resultQuery"
+          v-for="tasks in resultQuery"
           :key="tasks.id"
           :task="tasks"
           :isGrid="isGrid"
         />
       </transition-group>
-      <div class="card" v-else>
-        <div class="card-body col-12 d-flex justify-content-center p-0">
-          <div class="loadingio-spinner-ball-clerhpg27dp">
-            <div class="ldio-v6txkpbzph">
-              <div></div>
-            </div>
-          </div>
-        </div>
-          <h5 class="text-center">Please Wait...</h5>
-      </div>
       <div class="action py-2">
         <a
           href="#"
@@ -85,7 +80,9 @@
                   v-model="form.deksripsi"
                 ></textarea>
                 <div class="button-wrapper d-flex">
-                  <button class="btn btn-primary me-2" type="submit">Save</button>
+                  <button class="btn btn-primary me-2" type="submit">
+                    Save
+                  </button>
                   <button
                     class="btn btn-outline-secondary"
                     @click="isCreating = !isCreating"
@@ -99,6 +96,16 @@
         </div>
         <button @click="munculkan()">Munculkan semua Task</button>
       </div>
+    </div>
+    <div class="card" v-else>
+      <div class="card-body col-12 d-flex justify-content-center p-0">
+        <div class="loadingio-spinner-ball-clerhpg27dp">
+          <div class="ldio-v6txkpbzph">
+            <div></div>
+          </div>
+        </div>
+      </div>
+      <h5 class="text-center">Please Wait...</h5>
     </div>
   </div>
 </template>
@@ -120,16 +127,16 @@ export default {
       isCreating: false,
       judul: "",
       deksripsi: "",
-      loading:true,
+      loading: true,
       // form data
-      form:{
-        judul:'',
-        kategori:'',
-        deksripsi:''
-      }
+      form: {
+        judul: "",
+        kategori: "",
+        deksripsi: "",
+      },
     };
   },
-  created(){
+  created() {
     setTimeout(() => {
       this.tasks = [
         {
@@ -138,7 +145,7 @@ export default {
           isDone: false,
           category: "penting",
           display: true,
-          id: 1
+          id: 1,
         },
         {
           title: "Bukan Task 2",
@@ -146,7 +153,7 @@ export default {
           isDone: false,
           category: "penting",
           display: true,
-          id: 2
+          id: 2,
         },
         {
           title: "Cuma Task 3",
@@ -154,7 +161,7 @@ export default {
           isDone: false,
           category: "biasa",
           display: true,
-          id: 3
+          id: 3,
         },
       ];
       this.loading = false;
@@ -162,22 +169,24 @@ export default {
   },
   methods: {
     tambah() {
+      let index = this.tasks.length;
       this.tasks.push({
         title: this.form.judul,
         category: this.form.kategori,
         description: this.form.deksripsi,
         isDone: false,
-        display: true
+        display: true,
+        id: index + 1, //masih bisa menimbulkan issue lanjutan jika id tidak berurutan
       });
     },
-    munculkan(){
-      this.tasks.forEach(element => {
+    munculkan() {
+      this.tasks.forEach((element) => {
         element.display = !element.display;
       });
     },
-    shuffle(){
-      this.tasks = _.shuffle(this.tasks)
-      console.log(this.tasks)
+    shuffle() {
+      this.tasks = _.shuffle(this.tasks);
+      console.log(this.tasks);
     },
   },
   computed: {
@@ -193,25 +202,23 @@ export default {
         return this.tasks.filter((item) => {
           return this.kategori == item.category;
         });
-      } else if(this.sortBy){
-        if(this.sortBy == 1){
-          return this.tasks = _.orderBy(this.tasks, ['title'], ['asc'])
-        }else{
-          return this.tasks = _.orderBy(this.tasks, ['title'], ['desc'])
+      } else if (this.sortBy) {
+        if (this.sortBy == 1) {
+          return (this.tasks = _.orderBy(this.tasks, ["title"], ["asc"]));
+        } else {
+          return (this.tasks = _.orderBy(this.tasks, ["title"], ["desc"]));
         }
-      }else {
+      } else {
         console.log(this.tasks);
         return this.tasks;
       }
-
-
     },
   },
 };
 </script>
 <style>
 .tasks-move {
-transition: .5s;
+  transition: 0.5s;
 }
 @keyframes ldio-v6txkpbzph {
   0%,
