@@ -5,7 +5,7 @@
       isGrid ? 'col-12 col-md-6 col-lg-4' : 'col-12',
     ]"
     v-bind="task"
-    v-if="!task.isDone"
+    v-if="task.display != task.isDone"
   >
     <input
       type="checkbox"
@@ -25,6 +25,7 @@
       <div class="description-task small text-muted">
         {{ task.description }}
       </div>
+      <!-- <input class="form-control form-control-sm" type="date" /> -->
     </div>
   </div>
   <div v-else></div>
@@ -42,5 +43,8 @@ export default {
       default: false,
     },
   },
+  methods:{
+    
+  }
 };
 </script>

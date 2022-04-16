@@ -1,3 +1,4 @@
+import webpack from "webpack"
 export default {
   server:{
     port: 4000,//default 3000
@@ -39,6 +40,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -56,6 +58,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    plugins: [
+      new webpack.ProvidePlugin({
+      // global modules
+      _: 'lodash'
+      })
+    ]
   },
   //PWA configuration: https://go.nuxtjs.dev/config-pwa
   pwa:{
